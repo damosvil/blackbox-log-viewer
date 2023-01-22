@@ -909,6 +909,36 @@ GraphConfig.load = function(config) {
                             default:
                                 return getCurveForMinMaxFields(fieldName);
                         }
+                    case 'ANGLEMODE':
+                        switch (fieldName) {
+                            case 'debug[0]': 
+                            case 'debug[1]': 
+                            case 'debug[2]': 
+                            case 'debug[3]': 
+                                return {
+                                    offset: 0,
+                                    power: 1.0,
+                                    inputRange: 200,
+                                    outputRange: 1.0,
+                                };
+                            default:
+                                return getCurveForMinMaxFields(fieldName);
+                        }
+                    case 'FAILSAFE':
+                        switch (fieldName) {
+                            case 'debug[0]': // Number of Satellites (now this is in normal GPS data, maybe gpsTrust?)
+                            case 'debug[1]': // pDOP
+                            case 'debug[2]': // hDOP
+                            case 'debug[3]': // vDOP
+                                return {
+                                    offset: 0,
+                                    power: 1.0,
+                                    inputRange: 200,
+                                    outputRange: 1.0,
+                                };
+                            default:
+                                return getCurveForMinMaxFields(fieldName);
+                        }
     
                     case 'BARO':
                         switch (fieldName) {
@@ -931,6 +961,32 @@ GraphConfig.load = function(config) {
                             default:
                                 return getCurveForMinMaxFields(fieldName);
                             }
+                    case 'DSHOT_STATUS_N_TEMPERATURE':
+                    case 'DSHOT_STATUS_N_CURRENT':
+                    case 'DSHOT_STATUS_N_DEBUG1':
+                    case 'DSHOT_STATUS_N_DEBUG2':
+                    case 'DSHOT_STATUS_N_DEMAG_METRIC':
+                        return {
+                            offset: 0,
+                            power: 1.0,
+                            inputRange: 400,
+                            outputRange: 1.0,
+                        };
+                    case 'DSHOT_STATUS_N_VOLTAGE':
+                        return {
+                            offset: 0,
+                            power: 1.0,
+                            inputRange: 255,
+                            outputRange: 1.0,
+                        };
+                    case 'DSHOT_STATUS_N_ERPM_FRACTION_18':
+                        return {
+                            offset: 0,
+                            power: 1.0,
+                            inputRange: 4000,
+                            outputRange: 1.0,
+                        };
+
                     }
             }
             // if not found above then

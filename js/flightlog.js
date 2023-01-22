@@ -303,6 +303,35 @@ function FlightLog(logData) {
         return numMotors;
     };
 
+    /*
+     * Propagates array data fiels over empty fields
+     * Debug fields can be arrays with data, so it fills data gaps when no arrays are stored
+     */
+    function propagateArrayFields(chunks)
+    {
+        var k, j, i, previousFrame = 0, currentFrame;
+        
+        for (k = 0; k < chunks.length; k++)
+        {
+            for (j = 0; j < chunks[k].frames.length; j++)
+            {
+                currentFrame = chunks[k].frames[j]; 
+                if (previousFrame == 0)
+                    previousFrame = currentFrame;
+                    
+                for (i = 0; i < currentFrame.length; i++)
+                {
+                    if (!Array.isArray(currentFrame[i]) && Array.isArray(previousFrame[i]))
+                    {
+                        currentFrame[i] = previousFrame[i];
+                    }
+                }
+                
+                previousFrame = chunks[k].frames[j];
+            }
+        }
+    }
+
     /**
      * Get the raw chunks in the range [startIndex...endIndex] (inclusive)
      *
@@ -511,6 +540,7 @@ function FlightLog(logData) {
         }
 
         injectComputedFields(resultChunks, resultChunks);
+        propagateArrayFields(resultChunks);
 
         return resultChunks;
     }

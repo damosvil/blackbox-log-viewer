@@ -50,7 +50,7 @@ function BlackboxLogViewer() {
         
         prefs = new PrefStorage(),
         
-        configuration = null,           					       // is their an associated dump file ?
+        configuration = null,                                      // is their an associated dump file ?
         configurationDefaults = new ConfigurationDefaults(prefs),  // configuration defaults
 
         // User's video render config:
@@ -66,7 +66,7 @@ function BlackboxLogViewer() {
         lastGraphConfig = null,     // Undo feature - go back to last configuration.
         workspaceGraphConfigs = [], // Workspaces
         activeWorkspace = 1,        // Active Workspace
-        bookmarkTimes	= [],		// Empty array for bookmarks (times)
+        bookmarkTimes   = [],       // Empty array for bookmarks (times)
         
         // Graph configuration which is currently in use, customised based on the current flight log from graphConfig
         activeGraphConfig = new GraphConfig(),
@@ -169,6 +169,9 @@ function BlackboxLogViewer() {
         if (value === null)
             return "(absent)";
 
+        if (Array.isArray(value))
+            return value.toString();
+            
         return value.toFixed(2);
     }
     
@@ -219,8 +222,8 @@ function BlackboxLogViewer() {
 
             // Update flight mode flags on status bar
             $(".flight-mode", statusBar).text(
-            		fieldPresenter.decodeFieldToFriendly(null, 'flightModeFlags', currentFlightMode, null)	
-            	);
+                fieldPresenter.decodeFieldToFriendly(null, 'flightModeFlags', currentFlightMode, null)
+            );
 
             // update time field on status bar
             $(".graph-time").val(formatTime((currentBlackboxTime-flightLog.getMinTime())/1000, true));
@@ -807,22 +810,22 @@ function BlackboxLogViewer() {
     }
     
     this.getBookmarks = function() { // get bookmark events
-    	var bookmarks = [];
-    	try {
-    		if(bookmarkTimes!=null) {
-		    	for(var i=0; i<=9; i++) {
-		    		if(bookmarkTimes[i]!=null) {
-			    		bookmarks[i] = {
-			    			state: (bookmarkTimes[i]!=0),
-			    			time:  bookmarkTimes[i]
-			    			};
-			    		} else bookmarks[i] = null;
-		    	}
-    		}
-	    	return bookmarks;	    		
-    	} catch(e) {
-    		return null;
-    	}
+        var bookmarks = [];
+        try {
+            if (bookmarkTimes != null) {
+                for (var i = 0; i <= 9; i++) {
+                    if (bookmarkTimes[i] != null) {
+                        bookmarks[i] = {
+                                  state: (bookmarkTimes[i] != 0),
+                            time: bookmarkTimes[i]
+                        };
+                    } else bookmarks[i] = null;
+                }
+            }
+            return bookmarks;
+        } catch (e) {
+            return null;
+        }
     }
 
     this.getBookmarkTimes = function() {
@@ -1394,28 +1397,28 @@ function BlackboxLogViewer() {
             },
 
             function(newSettings) { // onSave
-	            userSettings = newSettings;
+                userSettings = newSettings;
 
-	            prefs.set('userSettings', newSettings);
+                prefs.set('userSettings', newSettings);
 
-	            // refresh the craft model
-	            if(graph!=null) {
-	                graph.refreshOptions(newSettings);
-	                graph.refreshLogo();
-	                graph.initializeCraftModel();
+                // refresh the craft model
+                if(graph!=null) {
+                    graph.refreshOptions(newSettings);
+                    graph.refreshLogo();
+                    graph.initializeCraftModel();
                     if(flightLog.hasGpsData()) {
                         mapGrapher.setUserSettings(newSettings);
                     }
-	                updateCanvasSize();
-	            }
+                    updateCanvasSize();
+                }
 
-	        }),
+            }),
 
-	        exportDialog = new VideoExportDialog($("#dlgVideoExport"), function(newConfig) {
-	            videoConfig = newConfig;
-	            
-	            prefs.set('videoConfig', newConfig);
-	        });
+            exportDialog = new VideoExportDialog($("#dlgVideoExport"), function(newConfig) {
+                videoConfig = newConfig;
+                
+                prefs.set('videoConfig', newConfig);
+            });
         
         $(".open-graph-configuration-dialog").click(function(e) {
             e.preventDefault();
@@ -1441,14 +1444,14 @@ function BlackboxLogViewer() {
         });
 
         $(".marker-offset", statusBar).click(function(e) {
-	        setCurrentBlackboxTime(markerTime);
-	        invalidateGraph(); 
+            setCurrentBlackboxTime(markerTime);
+            invalidateGraph(); 
         });
         
         for(var i=1; i< 9; i++) { // Loop through all the bookmarks.
             $('.bookmark-'+i, statusBar).click(function() {
-    	        setCurrentBlackboxTime(bookmarkTimes[parseInt(this.className.slice(-1))]);
-    	        invalidateGraph(); 
+                setCurrentBlackboxTime(bookmarkTimes[parseInt(this.className.slice(-1))]);
+                invalidateGraph(); 
             });
         }
 
@@ -1458,7 +1461,7 @@ function BlackboxLogViewer() {
                 $('.bookmark-'+ i, statusBar).css('visibility', 'hidden' );
             }
             $('.bookmark-clear', statusBar).css('visibility', 'hidden' );
-	        invalidateGraph(); 
+            invalidateGraph(); 
         });
 
         $('.configuration-file-name', statusBar).click(function(e) {
@@ -1885,38 +1888,38 @@ function BlackboxLogViewer() {
                                     }
                                 }
                             } else { // Bookmark Feature
-                        		if (!e.shiftKey) { // retrieve time from bookmark
-		                            if (bookmarkTimes[e.which-48] != null) {
-		                                setCurrentBlackboxTime(bookmarkTimes[e.which-48]);
-		                                invalidateGraph(); 
-		                            }
+                                if (!e.shiftKey) { // retrieve time from bookmark
+                                    if (bookmarkTimes[e.which - 48] != null) {
+                                        setCurrentBlackboxTime(bookmarkTimes[e.which - 48]);
+                                        invalidateGraph();
+                                    }
 
-		                        } else {// store time to bookmark
-		                            // Special Case : Shift Alt 0 clears all bookmarks
-		                            if(e.which==48) {
-		                                bookmarkTimes = null;
-		                                for(var i=1; i<=9; i++) {
-	                                        $('.bookmark-'+ i, statusBar).css('visibility', 'hidden' );
-		                                }
-                                        $('.bookmark-clear', statusBar).css('visibility', 'hidden' );
-		                            } else {
-		                                if(bookmarkTimes==null) bookmarkTimes = new Array();
-                                        if (bookmarkTimes[e.which-48] == null) {
-                                             bookmarkTimes[e.which-48] = currentBlackboxTime; 		// Save current time to bookmark
+                                } else {// store time to bookmark
+                                    // Special Case : Shift Alt 0 clears all bookmarks
+                                    if (e.which == 48) {
+                                        bookmarkTimes = null;
+                                        for (var i = 1; i <= 9; i++) {
+                                            $('.bookmark-' + i, statusBar).css('visibility', 'hidden');
+                                        }
+                                        $('.bookmark-clear', statusBar).css('visibility', 'hidden');
+                                    } else {
+                                        if (bookmarkTimes == null) bookmarkTimes = new Array();
+                                        if (bookmarkTimes[e.which - 48] == null) {
+                                            bookmarkTimes[e.which - 48] = currentBlackboxTime;         // Save current time to bookmark
                                         } else {
-                                             bookmarkTimes[e.which-48] = null; 			            // clear the bookmark
+                                            bookmarkTimes[e.which - 48] = null;                         // clear the bookmark
                                         }
-                                        $('.bookmark-'+(e.which-48), statusBar).css('visibility', ((bookmarkTimes[e.which-48]!=null)?('visible'):('hidden')) );
+                                        $('.bookmark-' + (e.which - 48), statusBar).css('visibility', ((bookmarkTimes[e.which - 48] != null) ? ('visible') : ('hidden')));
                                         var countBookmarks = 0;
-                                        for(var i=0; i<=9; i++) {
-                                        	countBookmarks += (bookmarkTimes[i]!=null)?1:0;
+                                        for (var i = 0; i <= 9; i++) {
+                                            countBookmarks += (bookmarkTimes[i] != null) ? 1 : 0;
                                         }
-                                        $('.bookmark-clear', statusBar).css('visibility', ((countBookmarks>0)?('visible'):('hidden')) );
+                                        $('.bookmark-clear', statusBar).css('visibility', ((countBookmarks > 0) ? ('visible') : ('hidden')));
 
-		                            }
-		                            invalidateGraph();
-		                        }
-                        	}
+                                    }
+                                    invalidateGraph();
+                                }
+                            }
                         } catch(e) {
                             console.log('Workspace feature not functioning');
                         }

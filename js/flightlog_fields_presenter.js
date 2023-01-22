@@ -690,6 +690,69 @@ function FlightLogFieldPresenter() {
             'debug[2]': 'hDOP (horizontal - 2D)',
             'debug[3]': 'vDOP (vertical - 1D)',
         },
+        'ANGLEMODE' : {
+            'debug[all]': 'ANGLEMODE',
+            'debug[0]': 'ANGLEMODE1',
+            'debug[1]': 'ANGLEMODE2',
+            'debug[2]': 'ANGLEMODE3',
+            'debug[3]': 'ANGLEMODE4',
+        },
+        'FAILSAFE' : {
+            'debug[all]': 'GPS Dilution of Precision',
+            'debug[0]': 'Number of Satellites',
+            'debug[1]': 'pDOP (positional - 3D)',
+            'debug[2]': 'hDOP (horizontal - 2D)',
+            'debug[3]': 'vDOP (vertical - 1D)',
+        },
+        'DSHOT_STATUS_N_TEMPERATURE' : {
+            'debug[all]': 'ESC Status & Temperature',
+            'debug[0]': 'ESC1',
+            'debug[1]': 'ESC2',
+            'debug[2]': 'ESC3',
+            'debug[3]': 'ESC4',
+        },
+        'DSHOT_STATUS_N_VOLTAGE' : {
+            'debug[all]': 'ESC Status & Voltage',
+            'debug[0]': 'ESC1',
+            'debug[1]': 'ESC2',
+            'debug[2]': 'ESC3',
+            'debug[3]': 'ESC4',
+        },
+        'DSHOT_STATUS_N_CURRENT' : {
+            'debug[all]': 'ESC Status & Current',
+            'debug[0]': 'ESC1',
+            'debug[1]': 'ESC2',
+            'debug[2]': 'ESC3',
+            'debug[3]': 'ESC4',
+        },
+        'DSHOT_STATUS_N_DEBUG1' : {
+            'debug[all]': 'ESC Status & Debug1',
+            'debug[0]': 'ESC1',
+            'debug[1]': 'ESC2',
+            'debug[2]': 'ESC3',
+            'debug[3]': 'ESC4',
+        },
+        'DSHOT_STATUS_N_DEBUG2' : {
+            'debug[all]': 'ESC Status & Debug2',
+            'debug[0]': 'ESC1',
+            'debug[1]': 'ESC2',
+            'debug[2]': 'ESC3',
+            'debug[3]': 'ESC4',
+        },
+        'DSHOT_STATUS_N_DEMAG_METRIC' : {
+            'debug[all]': 'ESC Status & Demag metric',
+            'debug[0]': 'ESC1',
+            'debug[1]': 'ESC2',
+            'debug[2]': 'ESC3',
+            'debug[3]': 'ESC4',
+        },
+        'DSHOT_STATUS_N_ERPM_FRACTION_18' : {
+            'debug[all]': 'ESC Status & RPM',
+            'debug[0]': 'ESC1',
+            'debug[1]': 'ESC2',
+            'debug[2]': 'ESC3',
+            'debug[3]': 'ESC4',
+        },
     };
 
     let DEBUG_FRIENDLY_FIELD_NAMES = null;
@@ -1354,7 +1417,42 @@ function FlightLogFieldPresenter() {
                         default:
                             return (value / 100).toFixed(2);
                     }
+                case 'ANGLEMODE':
+                    switch (fieldName) {
+                        case 'debug[0]': // packetCounter
+                        case 'debug[1]': // isCrsfPortConfig
+                        case 'debug[2]': // isLowPowerDisarmed
+                        case 'debug[3]': // mspTelemetryDescriptor
+                        default:
+                            return value.toFixed(0);
+                    }
+                case 'FAILSAFE':
+                    switch (fieldName) {
+                        case 'debug[0]': // packetCounter
+                        case 'debug[1]': // isCrsfPortConfig
+                        case 'debug[2]': // isLowPowerDisarmed
+                        case 'debug[3]': // mspTelemetryDescriptor
+                        default:
+                            return value.toFixed(0);
+                    }
+                case 'DSHOT_STATUS_N_TEMPERATURE':
+                    return (value[0] != null) ? `A${value[0]} W${value[1]} E${value[2]} STRESS:${value[3]} ${value[4]}ºC` : '---';
+                case 'DSHOT_STATUS_N_VOLTAGE':
+                    return (value[0] != null) ? `A${value[0]} W${value[1]} E${value[2]} STRESS:${value[3]} ${value[4]}V` : '---';
+                case 'DSHOT_STATUS_N_CURRENT':
+                    return (value[0] != null) ? `A${value[0]} W${value[1]} E${value[2]} STRESS:${value[3]} ${value[4]}A` : '---';
+                case 'DSHOT_STATUS_N_DEBUG1':
+                    return (value[0] != null) ? `A${value[0]} W${value[1]} E${value[2]} STRESS:${value[3]} ${value[4]}` : '---';
+                case 'DSHOT_STATUS_N_DEBUG2':
+                    return (value[0] != null) ? `A${value[0]} W${value[1]} E${value[2]} STRESS:${value[3]} ${value[4]}` : '---';
+                case 'DSHOT_STATUS_N_DEMAG_METRIC':
+                    return (value[0] != null) ? `A${value[0]} W${value[1]} E${value[2]} STRESS:${value[3]} ${value[4]}sTrs` : '---';
+                case 'DSHOT_STATUS_N_ERPM_FRACTION_18':
+					var rpm = (value[4] * 200 / flightLog.getSysConfig().motor_poles).toFixed();
+                    return (value[0] != null) ? `A${value[0]} W${value[1]} E${value[2]} STRESS:${value[3]} ${rpm}Rpm` : '---';
+
             }
+
             return value.toFixed(0);
         }
         return "";
